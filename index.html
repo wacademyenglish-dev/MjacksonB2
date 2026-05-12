@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WOLFFY 3.0 | Man in the Mirror - Michael Jackson</title>
+    
+    <!-- Fonts: Outfit (UI), Cinzel (Epic/Elegant), Share Tech Mono (Code) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Outfit:wght@300;400;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        mj: {
+                            bg: '#020617', /* Deep Midnight */
+                            dark: '#0f172a',
+                            panel: '#1e293b',
+                            silver: '#cbd5e1',
+                            neon: '#ffffff',
+                            glow: 'rgba(255, 255, 255, 0.4)',
+                            accent: '#38bdf8'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        epic: ['Cinzel', 'serif'],
+                        mono: ['"Share Tech Mono"', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { 
+            background-color: #020617; color: #fff; overflow: hidden; 
+            font-family: 'Outfit', sans-serif; user-select: none; 
+        }
+
+        /* SHATTERED AESTHETIC BACKGROUNDS */
+        .mirror-dust {
+            position: fixed; inset: 0; pointer-events: none; z-index: 1; opacity: 0.15;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            mix-blend-mode: overlay;
+        }
+        .moon-glow {
+            position: fixed; inset: 0; pointer-events: none; z-index: 0;
+            background: radial-gradient(circle at 50% -20%, rgba(56, 189, 248, 0.15) 0%, transparent 70%);
+        }
+
+        /* SLIDE SYSTEM */
+        .slide-container { display: flex; flex-direction: column; overflow-y: auto; height: calc(100vh - 100px); scroll-behavior: smooth; position: relative; z-index: 10; }
+        .slide { display: none; opacity: 0; width: 100%; min-height: 100%; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; transition: opacity 0.5s ease; }
+        .slide.active { display: flex; opacity: 1; animation: shatterIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .slide::before, .slide::after { content: ''; margin: auto; }
+
+        @keyframes shatterIn {
+            0% { opacity: 0; transform: scale(0.95) translateY(20px); filter: blur(10px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+        }
+
+        /* UI ELEMENTS */
+        .mirror-panel {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(203, 213, 225, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.4);
+            border-left: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8), inset 0 0 20px rgba(255,255,255,0.05);
+            position: relative;
+        }
+        
+        .mirror-panel::after {
+            content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%, rgba(255,255,255,0.05) 100%);
+            pointer-events: none; border-radius: inherit;
+        }
+
+        /* POLAROIDS (Shattered Glass vibe) */
+        .polaroid {
+            background: rgba(30, 41, 59, 0.8); padding: 12px 12px 30px 12px; border-radius: 2px;
+            border: 1px solid #475569; cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+            position: relative; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+        }
+        .polaroid:hover { transform: translateY(-5px) scale(1.02); border-color: #ffffff; box-shadow: 0 0 30px rgba(255, 255, 255, 0.2); }
+        .polaroid-img { width: 100%; aspect-ratio: 1/1; background: #0f172a; border: 1px solid #334155; display: flex; align-items: center; justify-content: center; font-size: 4rem; position: relative; overflow: hidden; }
+        .polaroid-emoji { opacity: 0.1; filter: blur(4px); transition: all 1s ease; transform: scale(0.8); color: #cbd5e1; }
+        .polaroid.developed .polaroid-emoji { opacity: 1; filter: blur(0px); transform: scale(1); text-shadow: 0 0 20px rgba(255, 255, 255, 0.8); color: #ffffff; }
+        .polaroid-text { position: absolute; bottom: 8px; left: 0; right: 0; text-align: center; color: #64748b; font-family: 'Share Tech Mono', monospace; font-size: 14px; opacity: 0; transition: opacity 1s; text-transform: uppercase; letter-spacing: 2px;}
+        .polaroid.developed .polaroid-text { opacity: 1; color: #ffffff; }
+
+        /* BUTTONS & ANIMATIONS */
+        .btn-neon {
+            background: transparent; color: #ffffff; font-family: 'Outfit', sans-serif; font-weight: 700;
+            padding: 16px 36px; border-radius: 2px; transition: all 0.3s; text-transform: uppercase; letter-spacing: 3px;
+            border: 1px solid #ffffff; box-shadow: 0 0 15px rgba(255, 255, 255, 0.1), inset 0 0 10px rgba(255, 255, 255, 0.05);
+        }
+        .btn-neon:hover { background: #ffffff; color: #020617; box-shadow: 0 0 30px rgba(255, 255, 255, 0.6); }
+        .btn-neon:active { transform: scale(0.95); }
+
+        .rec-glow { animation: recPulse 2s infinite; }
+        @keyframes recPulse {
+            0% { box-shadow: 0 0 10px rgba(56, 189, 248, 0.4); }
+            50% { box-shadow: 0 0 30px rgba(56, 189, 248, 0.8), inset 0 0 10px rgba(56, 189, 248, 0.5); }
+            100% { box-shadow: 0 0 10px rgba(56, 189, 248, 0.4); }
+        }
+
+        .shake { animation: shake 0.4s both; border-color: #ef4444 !important; color: #ef4444 !important; }
+        @keyframes shake { 10%, 90% { transform: translate3d(-2px, 0, 0); } 20%, 80% { transform: translate3d(4px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-6px, 0, 0); } 40%, 60% { transform: translate3d(6px, 0, 0); } }
+
+        /* THE MIRROR DIAL */
+        .mirror-dial-container { width: 140px; height: 140px; border-radius: 50%; background: #0f172a; border: 4px solid #334155; position: relative; cursor: pointer; box-shadow: 0 0 30px rgba(56, 189, 248, 0.2), inset 0 0 20px rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; }
+        .mirror-dial { width: 110px; height: 110px; border-radius: 50%; background: linear-gradient(135deg, #cbd5e1, #64748b); position: relative; transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: inset 0 0 10px rgba(255,255,255,0.8); }
+        .mirror-indicator { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 4px; height: 20px; background: #020617; border-radius: 2px; }
+
+        /* LYRIC HACKER */
+        .lyric-hl { color: #64748b; cursor: pointer; border-bottom: 1px dashed #475569; transition: 0.3s; padding: 0 4px; }
+        .lyric-hl:hover { color: #ffffff; text-shadow: 0 0 15px rgba(255,255,255,0.6); border-bottom-color: #ffffff; }
+        .lyric-hl.active { color: #020617; background: #ffffff; border-bottom: 2px solid #ffffff; text-shadow: none; font-weight: bold; }
+
+        /* UTILS */
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .vinyl-spin { animation: spin 5s linear infinite; }
+        .paused { animation-play-state: paused; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        .drawer-left { transform: translateX(-100%); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .drawer-left.open { transform: translateX(0); }
+    </style>
+</head>
+<body class="h-screen w-screen relative overflow-hidden flex flex-col">
+
+    <div class="moon-glow"></div>
+    <div class="mirror-dust"></div>
+
+    <!-- TEACHER TOOLSET (Drawer) -->
+    <aside id="teacher-panel" class="fixed top-0 left-0 h-full w-full md:w-[450px] bg-mj-dark border-r border-slate-700 z-[60] drawer-left flex flex-col shadow-[20px_0_50px_rgba(0,0,0,0.9)] pb-[100px]">
+        <div class="p-6 border-b border-slate-700 flex justify-between items-center bg-[#020617]">
+            <h2 class="font-epic font-black text-2xl text-white uppercase tracking-widest"><i class="fa-solid fa-chess-knight mr-2"></i>Director</h2>
+            <button onclick="toggleTeacher()" class="text-slate-400 hover:text-white text-2xl"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        
+        <div class="p-6 border-b border-slate-700 bg-[#0f172a]">
+            <p class="text-[10px] font-mono text-slate-400 uppercase font-bold tracking-widest mb-4">Instant Feedback</p>
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="praise('EPIC')" class="bg-slate-800 border border-mj-silver text-white py-3 text-sm font-bold rounded hover:bg-white hover:text-black transition-colors font-epic tracking-wider">EPIC</button>
+                <button onclick="praise('PROFOUND')" class="bg-slate-800 border border-mj-accent text-mj-accent py-3 text-sm font-bold rounded hover:bg-mj-accent hover:text-black transition-colors font-epic tracking-wider">PROFOUND</button>
+            </div>
+        </div>
+
+        <div class="flex-1 p-6 relative flex flex-col">
+            <div class="flex justify-between items-center mb-4">
+                <p class="text-[10px] font-mono text-slate-400 uppercase font-bold tracking-widest">Whiteboard Notes</p>
+                <button onclick="document.getElementById('notes').value=''" class="text-xs text-slate-500 hover:text-red-400 font-bold uppercase"><i class="fa-solid fa-trash mr-1"></i></button>
+            </div>
+            <textarea id="notes" class="flex-1 w-full bg-[#020617] border border-slate-700 rounded p-4 text-white font-mono text-lg leading-relaxed resize-none focus:outline-none focus:border-white shadow-inner" placeholder="Log grammar mistakes or vocabulary here..."></textarea>
+        </div>
+    </aside>
+
+    <!-- PRAISE OVERLAY -->
+    <div id="praise-overlay" class="fixed inset-0 z-[100] pointer-events-none flex items-center justify-center opacity-0 transition-opacity duration-300">
+        <h1 id="praise-text" class="text-7xl md:text-9xl font-black font-epic text-white tracking-widest uppercase drop-shadow-[0_0_40px_rgba(255,255,255,0.8)] transform scale-50 transition-transform duration-500">EPIC</h1>
+    </div>
+
+    <!-- MAIN SLIDE CONTAINER -->
+    <main id="stage" class="flex-1 overflow-y-auto hide-scroll pb-32 slide-container">
+        
+        <!-- TRACK 01: COVER -->
+        <section class="slide active">
+            <div class="mirror-panel p-10 max-w-4xl w-full flex flex-col md:flex-row items-center gap-12 relative overflow-visible">
+                <div class="relative w-64 h-64 md:w-80 md:h-80 shrink-0 group">
+                    <!-- Spinning Vinyl Peeking -->
+                    <div class="absolute inset-y-0 right-0 w-full h-full rounded-full bg-[#050505] border-8 border-[#222] flex items-center justify-center vinyl-spin shadow-2xl transition-transform duration-700 group-hover:translate-x-12 z-10">
+                        <div class="w-24 h-24 rounded-full bg-mj-silver border-4 border-[#111] flex flex-col items-center justify-center shadow-inner relative z-10">
+                            <div class="w-4 h-4 rounded-full bg-black"></div>
+                            <span class="text-[8px] font-black font-epic mt-2 uppercase text-black">MJ</span>
+                        </div>
+                        <div class="absolute inset-2 rounded-full border border-white/5"></div>
+                        <div class="absolute inset-6 rounded-full border border-white/5"></div>
+                        <div class="absolute inset-10 rounded-full border border-white/5"></div>
+                        <div class="absolute inset-14 rounded-full border border-white/5"></div>
+                    </div>
+                    <!-- Album Cover -->
+                    <img src="https://upload.wikimedia.org/wikipedia/en/5/51/Michael_Jackson_-_Bad.png" alt="Bad Album Cover" class="absolute inset-0 w-full h-full object-cover rounded shadow-[0_0_50px_rgba(255,255,255,0.2)] border border-slate-600 z-20 transition-transform duration-700 group-hover:scale-105">
+                </div>
+                <div class="text-center md:text-left">
+                    <span class="bg-mj-neon text-black px-3 py-1 font-bold text-[10px] font-mono tracking-widest rounded mb-4 inline-block uppercase">B2 Upper-Intermediate</span>
+                    <h1 class="text-5xl md:text-7xl font-epic font-black leading-none mb-2 uppercase tracking-tighter text-white">Man in the Mirror</h1>
+                    <p class="text-xl text-mj-silver font-sans uppercase tracking-widest mb-8 border-b border-slate-700 pb-4 inline-block">Michael Jackson</p>
+                    
+                    <div class="space-y-3 font-mono text-xs text-slate-400">
+                        <p><strong class="text-white">Grammar:</strong> Modals of Obligation & Zero/First Conditional</p>
+                        <p><strong class="text-white">Theme:</strong> Social Responsibility, The Bystander Effect</p>
+                        <p><strong class="text-white">Mission:</strong> High-Pressure Moral Arguments</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TRACK 02: BRIEFING -->
+        <section class="slide">
+            <h2 class="font-mono text-mj-silver text-[10px] font-bold uppercase tracking-[0.3em] mb-4">Track 02: Setup</h2>
+            <h1 class="font-epic font-black text-4xl md:text-6xl text-white mb-10 uppercase tracking-widest text-center">The Obligation</h1>
+            
+            <div class="mirror-panel p-10 md:p-14 w-full max-w-4xl mx-auto border-t-4 border-mj-neon text-left relative">
+                <div class="absolute top-0 right-10 w-8 h-2 bg-mj-neon rounded-b"></div>
+                <div class="flex items-center gap-4 mb-8 border-b border-slate-700 pb-6">
+                    <i class="fa-solid fa-scale-unbalanced text-3xl text-white"></i>
+                    <h3 class="font-epic text-2xl text-white uppercase tracking-widest">Grammar Frequency</h3>
+                </div>
+                <div class="space-y-6 text-xl leading-relaxed text-slate-300 font-sans">
+                    <p>In this session, we manipulate moral duty.</p>
+                    <p class="bg-[#020617] p-6 rounded border border-slate-700 text-lg font-sans">
+                        We use <strong class="text-white">Modals of Obligation</strong> (Should, Ought to, Must) to talk about what is right, what is necessary, and what is our duty to fix.<br><br>
+                        <span class="text-slate-500 text-base italic">It is the language of leadership... and social change.</span>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TRACK 03: VIBE CHECK -->
+        <section class="slide">
+            <h1 class="font-epic font-black text-4xl md:text-6xl text-white mb-8 text-center uppercase tracking-widest">The Reaction</h1>
+            <p class="text-xl font-sans text-slate-400 mb-12 text-center max-w-3xl">When you see an injustice or a person in deep need on the street, what is your first internal reaction?</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl">
+                <button onclick="vibe(this, 'Shock')" class="mirror-panel p-8 text-center hover:border-mj-neon transition-all border-b-4 border-b-transparent mcq-btn group">
+                    <i class="fa-solid fa-bolt text-4xl text-slate-600 group-hover:text-white mb-4 transition-colors"></i>
+                    <p class="text-2xl font-epic font-black text-white uppercase tracking-wider">Shock</p>
+                    <p class="text-xs font-mono text-slate-500 mt-2 uppercase">Paralyzed by the reality</p>
+                </button>
+                <button onclick="vibe(this, 'Guilt')" class="mirror-panel p-8 text-center hover:border-mj-neon transition-all border-b-4 border-b-transparent mcq-btn group">
+                    <i class="fa-solid fa-heart-crack text-4xl text-slate-600 group-hover:text-white mb-4 transition-colors"></i>
+                    <p class="text-2xl font-epic font-black text-white uppercase tracking-wider">Guilt</p>
+                    <p class="text-xs font-mono text-slate-500 mt-2 uppercase">Feeling bad for having more</p>
+                </button>
+                <button onclick="vibe(this, 'Action')" class="mirror-panel p-8 text-center hover:border-mj-neon transition-all border-b-4 border-b-transparent mcq-btn group">
+                    <i class="fa-solid fa-hand-holding-hand text-4xl text-slate-600 group-hover:text-white mb-4 transition-colors"></i>
+                    <p class="text-2xl font-epic font-black text-white uppercase tracking-wider">Action</p>
+                    <p class="text-xs font-mono text-slate-500 mt-2 uppercase">Wanting to help immediately</p>
+                </button>
+            </div>
+            <div id="vibe-hub" class="hidden mt-10 p-6 bg-slate-800 rounded border-l-4 border-white w-full max-w-5xl text-left shadow-lg">
+                <p class="text-white font-mono text-[10px] font-bold uppercase mb-2 tracking-widest">Mic is Live</p>
+                <p class="text-2xl font-bold text-white">Explain to your director why you react this way, and if you act on it.</p>
+            </div>
+        </section>
+
+        <!-- TRACK 04: TRIVIA -->
+        <section class="slide">
+            <h2 class="font-mono text-mj-silver text-[10px] font-bold uppercase tracking-[0.3em] mb-4">Track 04: The Origins</h2>
+            <h1 class="font-epic font-black text-4xl md:text-5xl text-white mb-10 uppercase tracking-widest text-center">The Missing Writer?</h1>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-5xl">
+                <div class="mirror-panel p-8 flex flex-col justify-center">
+                    <p class="text-xl font-sans text-slate-300 leading-relaxed mb-6">"Man in the Mirror" is one of Michael Jackson's most iconic philanthropic anthems. But who actually wrote the lyrics?</p>
+                    <p class="text-sm font-mono text-mj-silver uppercase">Did MJ write it himself?</p>
+                </div>
+                <div class="flex flex-col gap-4">
+                    <button onclick="checkTrivia(this, false)" class="mirror-panel p-6 text-left hover:bg-slate-800 transition-colors border-l-4 border-transparent">
+                        <span class="font-epic font-black text-2xl text-slate-400 uppercase tracking-wider">A. Yes, Michael wrote it</span>
+                    </button>
+                    <button onclick="checkTrivia(this, true)" class="mirror-panel p-6 text-left hover:bg-slate-800 transition-colors border-l-4 border-transparent">
+                        <span class="font-epic font-black text-2xl text-slate-400 uppercase tracking-wider">B. No, Siedah Garrett wrote it</span>
+                    </button>
+                    <button onclick="checkTrivia(this, false)" class="mirror-panel p-6 text-left hover:bg-slate-800 transition-colors border-l-4 border-transparent">
+                        <span class="font-epic font-black text-2xl text-slate-400 uppercase tracking-wider">C. No, Quincy Jones wrote it</span>
+                    </button>
+                </div>
+            </div>
+            <div id="trivia-hub" class="hidden mt-8 w-full max-w-5xl text-left">
+                <p class="text-slate-300 font-sans text-lg">Siedah Garrett wrote the song. She said she wanted MJ to sing it because if the biggest star in the world told people to look at themselves, they would listen.</p>
+            </div>
+        </section>
+
+        <!-- TRACK 05: PRE-LISTENING (DEEP DIVE) -->
+        <section class="slide">
+            <h1 class="font-epic font-black text-4xl md:text-6xl text-white mb-6 uppercase tracking-widest text-center text-mj-accent rec-glow p-4 rounded-full inline-block border border-mj-accent/30 bg-[#0f172a]">Deep Dive</h1>
+            <p class="text-2xl font-sans text-slate-300 mb-12 text-center max-w-4xl">The concept of the "Blind Eye".</p>
+            
+            <div class="mirror-panel p-10 md:p-14 w-full max-w-4xl mx-auto border-t-4 border-mj-accent text-center shadow-2xl">
+                <p class="font-epic font-black text-3xl md:text-4xl text-white leading-tight mb-8 tracking-wider uppercase">"Why is it easier for humanity to look away from a problem than to face it?"</p>
+                <div class="h-px w-full bg-slate-700 mb-8"></div>
+                <p class="font-mono text-slate-400 text-sm uppercase tracking-widest">Fear? Helplessness? Selfishness?</p>
+            </div>
+        </section>
+
+        <!-- TRACK 06: LEXICON I -->
+        <section class="slide">
+            <h2 class="font-mono text-mj-silver text-[10px] font-bold uppercase tracking-[0.3em] mb-4">Track 06: Lexicon</h2>
+            <h1 class="font-epic font-black text-4xl md:text-5xl text-white mb-6 uppercase tracking-widest text-center">Social Concepts</h1>
+            <p class="font-mono text-slate-500 text-xs mb-10 text-center uppercase tracking-widest">Shatter the glass to reveal</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 w-full max-w-4xl mx-auto">
+                <div class="polaroid" onclick="developPolaroid(this, 'Penniless', 'Having absolutely no money; extremely poor.', 'Why is it so easy to ignore penniless people in big cities?', 'fa-coins')">
+                    <div class="polaroid-img"><i class="fa-solid fa-coins polaroid-emoji"></i></div>
+                    <div class="polaroid-text">Reveal</div>
+                </div>
+                <div class="polaroid" onclick="developPolaroid(this, 'Disregard', 'To pay no attention to; to ignore completely.', 'What happens to a society that shows disregard for its most vulnerable?', 'fa-eye-slash')">
+                    <div class="polaroid-img"><i class="fa-solid fa-eye-slash polaroid-emoji"></i></div>
+                    <div class="polaroid-text">Reveal</div>
+                </div>
+            </div>
+            
+            <div id="polaroid-hub-1" class="hidden mt-10 w-full max-w-4xl text-left mirror-panel p-6 border-l-4 border-white">
+                <p class="text-white font-epic text-2xl mb-1 uppercase tracking-wider" id="polaroid-title-1">Word</p>
+                <p class="text-slate-300 font-sans text-lg mb-4" id="polaroid-def-1">Definition</p>
+                <div class="bg-[#020617] p-4 border border-slate-700 rounded">
+                    <span class="font-mono text-mj-silver text-[10px] font-bold uppercase tracking-widest block mb-2">Director's Prompt</span>
+                    <p class="text-white font-sans text-xl" id="polaroid-q-1">Question</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TRACK 07: DEBATE I -->
+        <section class="slide">
+            <h2 class="font-mono text-mj-silver text-[10px] font-bold uppercase tracking-[0.3em] mb-4">Track 07: The Talk</h2>
+            <h1 class="font-epic font-black text-4xl md:text-5xl text-white mb-10 uppercase tracking-widest text-center">Debate I</h1>
+            
+            <div class="w-full max-w-4xl mx-auto">
+                <div class="mirror-panel p-10 border-l-4 border-mj-accent">
+                    <p class="font-epic font-black text-3xl text-white mb-4 uppercase tracking-wider">The Bystander</p>
+                    <p class="font-sans text-slate-300 text-xl leading-relaxed mb-6">Psychologists call it the "Bystander Effect"—when there are many people around, no one helps because everyone assumes someone else will do it.</p>
+                    <p class="font-sans text-white text-2xl font-bold">Have you ever witnessed this effect in real life?</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TRACK 08: LEXICON II -->
+        <section class="slide">
+            <h2 class="font-mono text-mj-silver text-[10px] font-bold uppercase tracking-[0.3em] mb-4">Track 08: Lexicon</h2>
+            <h1 class="font-epic font-black text-4xl md:text-5xl text-white mb-6 uppercase tracking-widest text-center">The Illusion</h1>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 w-full max-w-4xl mx-auto">
+                <div class="polaroid" onclick="developPolaroid(this, 'Pretend', 'To act as if something is true when it is not.', 'Does modern society encourage us to pretend everything is fine?', 'fa-masks-theater')">
+                    <div class="polaroid-img"><i class="fa-solid fa-masks-theater polaroid-emoji"></i></div>
+                    <div class="polaroid-text">Reveal</div>
+                </div>
+                <div class="polaroid" onclick="developPolaroid(this, 'Blind Eye', 'To deliberately ignore something that you know is wrong.', 'When is turning a blind eye a survival mechanism versus pure selfishness?', 'fa-user-ninja')">
+                    <div class="polaroid-img"><i class="fa-solid fa-user-ninja polaroid-emoji"></i></div>
+                    <div class="polaroid-text">Reveal</div>
+                </div>
+            </div>
+            
+            <div id="polaroid-hub-2" class="hidden mt-10 w-full max-w-4xl text-left mirror-panel p-6 border-l-4 border-white">
+                <p class="text-white font-epic text-2xl mb-1 uppercase tracking-wider" id="polaroid-title-2">Word</p>
+                <p class="text-slate-300 font-sans text-lg mb-4" id="polaroid-def-2">Definition</p>
+                <div class="bg-[#020617] p-4 border border-slate-700 rounded">
+                    <span class="font-mono text-mj-silver text-[10px] font-bold uppercase tracking-widest block mb-2">Director's Prompt</span>
+                    <p class="text-white font-sans text-xl" id="polaroid-q-2">Question</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TRACK 09: DEBATE II -->
+        <section class="slide">
+            <h2 class="font-mono text-mj-silver text-[10px] font-bold uppercase tracking-[0.3em] mb-4">Track 09: The Talk</h2>
+            <h1 class="font-epic font-black text-4xl md:text-5xl text-white mb-10 uppercase tracking-widest text-center">Debate II</h1>
+            
+            <div class="w-full max-w-4xl mx-auto">
+                <div class="mirror-panel p-10 border-l-4 border-white">
+                    <p class="font-epic font-black text-3xl text-white mb-4 uppercase tracking-wider">The Illusion of Peace</p>
+                    <p class="font-sans text-slate-300 text-xl leading-relaxed mb-6">"We pretend not to see their needs."</p>
+                    <p class="font-sans text-white text-2xl font-bold">If we stopped pretending and truly faced every global tragedy, would we go crazy? Is "pretending" a defense mechanism?</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TRACK 10: VISUAL MISSION -->
+        <section class="slide">
+            <h2 class="font-mono text-mj-silver text-[10px] font-bold uppercase tracking-[0.3em] mb-4">Track 10: Pre-Screening</h2>
+            <h1 class="font-epic font-black text-4xl md:text-6xl text-white mb-10 uppercase tracking-widest text-center">Visual Mission</h1>
+            
+            <div class="mirror-panel p-10 md:p-14 w-full max-w-4xl mx-auto text-center border-t-4 border-slate-500">
+                <i class="fa-solid fa-eye text-5xl text-slate-400 mb-8"></i>
+                <p class="font-sans font-bold text-2xl md:text-3xl text-white leading-tight mb-8">"Unlike typical pop videos, Michael barely appears. It's a montage of history. Spot at least 3 major historical figures or events."</p>
+                <button onclick="document.getElementById('vis-hub').classList.remove('hidden'); shootConfetti();" class="btn-neon mt-4 text-sm">Reveal Goal</button>
+            </div>
+            <div id="vis-hub" class="hidden mt-10 w-full max-w-4xl bg-slate-800 p-6 border-l-4 border-white text-left rounded shadow-lg">
+                <p class="font-sans text-slate-300 text-lg">Watch for Martin Luther King Jr., Gandhi, Mother Teresa, John Lennon, and scenes of poverty and war.</p>
+            </div>
+        </section>
+
+        <!-- TRACK 11: THE VIDEO -->
+        <section class="slide h-full">
+            <div class="flex justify-between items-end w-full max-w-5xl mb-6">
+                <div>
+                    <h2 class="font-mono text-mj-silver text-[10px] font-bold uppercase tracking-[0.3em] mb-2">Track 11</h2>
+                    <h1 class="font-epic font-black text-4xl md:text-5xl text-white uppercase tracking-widest">Man in the Mirror</h1>
+                </div>
+                <span class="bg-red-600 text-white px-2 py-1 font-bold text-[10px] font-mono tracking-widest rounded uppercase animate-pulse">Live</span>
+            </div>
+            
+            <div class="w-full max-w-5xl rounded-lg overflow-hidden border-4 border-slate-700 shadow-[0_0_30px_rgba(255,255,255,0.2)] relative aspect-video bg-black">
+                <iframe class="absolute inset-0 w-full h-full" src="https://www.youtube.com/embed/PivWY9wn5ps?rel=0" frameborder="0" allowfullscreen></iframe>
+            </div>
+        </section>
+
+        <!-- TRACK 12: FACT CHECK -->
+        <section class="slide">
+            <h2 class="font-mono text-mj-silver text-[10px] font-bold uppercase tracking-[0.3em] mb-4">Track 12: Observation</h2>
+            <h1 class="font-epic font-black text-4xl md:text-5xl text-white mb-10 uppercase tracking-widest text-center">Fact Check</h1>
+            
+            <div class="mirror-panel p-10 w-full max-w-4xl mx-auto text-center border-t-4 border-slate-600">
+                <p class="font-sans text-2xl text-white mb-10 leading-relaxed">
+                    "The video focuses heavily on Michael Jackson's legendary dance moves to keep the audience entertained."
+                </p>
+                <div class="flex gap-6 justify-center">
+                    <button onclick="checkTF(this, false, 'tf-hub')" class="bg-slate-800 border border-slate-600 px-10 py-4 font-epic font-black text-2xl text-slate-400 uppercase tracking-widest rounded hover:border-white hover:text-white transition-all">True</button>
+                    <button onclick="checkTF(this, true, 'tf-hub')" class="bg-slate-800 border border-slate-600 px-10 py-4 font-epic font-black text-2xl text-slate-400 uppercase tracking-widest rounded hover:border-white hover:text-white transition-all">False</button>
+                </div>
+            </div>
+            <div id="tf-hub" class="hidden mt-8 w-full max-w-4xl bg-slate-800 p-6 border-l-4 border-white text-left rounded shadow-lg">
+                <p class="text-white text-lg font-bold">False. He deliberately removed himself from the video to make sure the message about the world was the only focus.</p>
+            </div>
+        </section>
+
+        <!-- TRACK 13: LYRIC HACKER I -->
+        <section class="slide">
+            <h2 class="font-mono text-mj-silver text-[10px] font-bold uppercase tracking-[0.3em] mb-4">Track 13</h2>
+            <h1 class="font-epic font-black text-4xl md:text-5xl text-white mb-6 uppercase tracking-widest text-center">Lyric Hacker I</h1>
+            <p class="font-mono text-slate-500 text-xs mb-10 text-center uppercase tracking-widest">Click the dashed text</p>
+
+            <div class="w-full max-w-4xl mx-auto mirror-panel p-10 md:p-14 text-center border-t-4 border-white">
+                <div class="space-y-6 text-3xl font-sans text-slate-300 leading-relaxed font-bold">
+                    <p>A summer's <span class="lyric-hl" onclick="hackLyric(this, 'lh-1')">disregard</span>,</p>
+                    <p>a <span class="lyric-hl" onclick="hackLyric(this, 'lh-2')">broken bottle top</span></p>
+                    <p>And a one man soul.</p>
+                </div>
+
+                <div id="lh-1" class="hidden mt-10 bg-[#020617] p-6 border border-slate-700 rounded text-left">
+                    <span class="font-mono text-white font-bold text-[10px] uppercase tracking-widest">Decode</span>
+                    <p class="text-white text-xl mt-2">People ignoring the homeless during the hot summer days when everyone else is having fun.</p>
+                </div>
+                <div id="lh-2" class="hidden mt-10 bg-[#020617] p-6 border border-slate-700 rounded text-left">
+                    <span class="font-mono text-white font-bold text-[10px] uppercase tracking-widest">Imagery</span>
+                    <p class="text-white text-xl mt-2">A vivid image of poverty, addiction, and trash left on the streets.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TRACK 14: LYRIC HACKER II -->
+        <section class="slide">
+            <h2 class="font-mono text-mj-silver text-[10px] font-bold uppercase tracking-[0.3em] mb-4">Track 14</h2>
+            <h1 class="font-epic font-black text-4xl md:text-5xl text-white mb-6 uppercase tracking-widest text-center">Lyric Hacker II</h1>
+
+            <div class="w-full max-w-4xl mx-auto mirror-panel p-10 md:p-14 text-center border-t-4 border-slate-500">
+                <div class="space-y-6 text-3xl font-sans text-slate-300 leading-relaxed font-bold">
+                    <p>They <span class="lyric-hl" onclick="hackLyric(this, 'lh-3')">follow each other</span> on the wind ya' know</p>
+                    <p>'Cause they got nowhere to go.</p>
+                </div>
+
+                <div id="lh-3" class="hidden mt-10 bg-[#020617] p-6 border border-slate-700 rounded text-left">
+                    <span class="font-mono text-white font-bold text-[10px] uppercase tracking-widest">Meaning Decode</span>
+                    <p class="text-white text-xl mt-2">Like leaves in the wind, lost people drift through society. It also reflects the "herd mentality" of society ignoring them.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TRACK 15: LYRIC HACKER III -->
+        <section class="slide">
+            <h2 class="font-mono text-mj-silver text-[10px] font-bold uppercase tracking-[0.3em] mb-4">Track 15</h2>
+            <h1 class="font-epic font-black text-4xl md:text-5xl text-white mb-6 uppercase tracking-widest text-center">The Climax</h1>
+
+            <div class="w-full max-w-4xl mx-auto mirror-panel p-10 md:p-14 text-center border-t-4 border-mj-accent">
+                <div class="space-y-6 text-3xl font-sans text-slate-300 leading-relaxed font-bold">
+                    <p>I'm <span class="lyric-hl" onclick="hackLyric(this, 'lh-4')">starting with</span> the man in the mirror</p>
+                    <p>I'm asking him to change his ways</p>
+                    <p>And no message could have been any <span class="lyric-hl" onclick="hackLyric(this, 'lh-5')">clearer</span>.</p>
+                </div>
+
+                <div id="lh-4" class="hidden mt-10 bg-[#020617] p-6 border border-slate-700 rounded text-left">
+                    <span class="font-mono text-white font-bold text-[10px] uppercase tracking-widest">The Core Message</span>
+                    <p class="text-white text-xl mt-2">You cannot change the world by pointing fingers at politicians or society. True change starts with self-reflection.</p>
+                </div>
+                <div id="lh-5" class="hidden mt-10 bg-[#020617] p-6 border border-slate-700 rounded text-left">
+                    <span class="font-mono text-white font-bold text-[10px] uppercase tracking-widest">Resolution</span>
+                    <p class="text-white text-xl mt-2">The ultimate realization that personal accountability is the only path forward.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TRACK 16: THE MIRROR DIAL (GRAMMAR METAPHOR) -->
+        <section class="slide">
+            <h2 class="font-mono text-mj-silver text-[10px] font-bold uppercase tracking-[0.3em] mb-4">Track 16: Mechanics</h2>
+            <h1 class="font-epic font-black text-4xl md:text-6xl text-white mb-10 uppercase tracking-widest text-center">The Mirror</h1>
+            
+            <div class="mirror-panel p-10 md:p-14 max-w-5xl w-full flex flex-col md:flex-row items-center gap-12 border-t-2 border-slate-700">
+                <div class="flex flex-col items-center gap-6 shrink-0 relative">
+                    <span class="font-epic font-black text-xl text-slate-500 uppercase tracking-widest" id="dial-lbl-1">The Illusion</span>
+                    <div class="mirror-dial-container" onclick="toggleMirrorDial()">
+                        <div id="mirror-dial" class="mirror-dial transform -rotate-45">
+                            <div class="mirror-indicator"></div>
+                        </div>
+                    </div>
+                    <span class="font-epic font-black text-xl text-white uppercase tracking-widest opacity-30" id="dial-lbl-2">The Obligation</span>
+                    <p class="text-[10px] font-mono text-slate-500 uppercase absolute -bottom-8">Click Mirror to switch</p>
+                </div>
+
+                <div id="mirror-screen" class="flex-1 w-full bg-[#020617] border-2 border-slate-800 h-64 relative overflow-hidden flex items-center justify-center p-8 rounded shadow-inner">
+                    <!-- ILLUSION -->
+                    <div id="mirror-real" class="absolute inset-0 flex flex-col items-center justify-center transition-all duration-500" style="opacity: 1; transform: scale(1);">
+                        <p class="font-sans font-bold text-3xl text-slate-400 mb-4 text-center">"We pretend not to see."</p>
+                        <span class="font-mono text-slate-500 text-xs uppercase tracking-widest border border-slate-700 px-3 py-1 rounded">Present Action (Comfort)</span>
+                    </div>
+                    
+                    <!-- OBLIGATION -->
+                    <div id="mirror-regret" class="absolute inset-0 flex flex-col items-center justify-center transition-all duration-500" style="opacity: 0; transform: scale(0.8);">
+                        <p class="font-sans font-bold text-3xl text-white mb-4 text-center drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">"We ought to make a change."</p>
+                        <span class="font-mono text-white text-xs uppercase tracking-widest border border-white px-3 py-1 rounded">Modal of Obligation (Duty)</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TRACK 17: SYNTAX BLUEPRINT -->
+        <section class="slide">
+            <h2 class="font-mono text-mj-silver text-[10px] font-bold uppercase tracking-[0.3em] mb-4">Track 17: Structure</h2>
+            <h1 class="font-epic font-black text-4xl md:text-6xl text-white mb-10 uppercase tracking-widest text-center">The Duty Equation</h1>
+            
+            <div class="mirror-panel p-10 md:p-14 w-full max-w-5xl mx-auto flex flex-col items-center gap-8 border-t-2 border-slate-700">
+                <div class="flex flex-col md:flex-row gap-4 items-center w-full justify-center">
+                    <div class="bg-[#020617] p-6 border border-slate-700 rounded text-center w-full md:w-5/12">
+                        <span class="block text-slate-500 font-mono text-[10px] font-bold uppercase tracking-widest mb-2">The Subject</span>
+                        <span class="text-3xl font-epic font-black text-white">Subject</span>
+                    </div>
+                    <i class="fa-solid fa-plus text-2xl text-white hidden md:block"></i>
+                    <i class="fa-solid fa-arrow-down text-2xl text-white md:hidden"></i>
+                    <div class="bg-[#020617] p-6 border border-white rounded text-center w-full md:w-5/12 shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+                        <span class="block text-white font-mono text-[10px] font-bold uppercase tracking-widest mb-2">The Obligation</span>
+                        <span class="text-3xl font-epic font-black text-white">Must / Should / Ought to + Verb</span>
+                    </div>
+                </div>
+                <p class="text-xl font-sans font-bold text-slate-400 mt-6">"We <span class="text-white border-b border-white">should help</span> them. We <span class="text-white border-b border-white">must not ignore</span> it."</p>
+            </div>
+        </section>
+
+        <!-- TRACK 18: SYSTEM CHECK I -->
+        <section class="slide">
+            <h2 class="font-mono text-mj-silver text-[10px] font-bold uppercase tracking-[0.3em] mb-4">Track 18</h2>
+            <h1 class="font-epic font-black text-4xl md:text-6xl text-white mb-10 uppercase tracking-widest text-center">System Patch</h1>
+            
+            <div class="mirror-panel p-10 md:p-14 w-full max-w-4xl mx-auto text-center border-t-4 border-slate-700">
+                <p class="font-sans font-bold text-3xl text-white mb-10 leading-relaxed">
+                    "It's a moral recommendation. You <span class="text-slate-500 border-b-2 border-slate-500 px-4 pb-1"> _____ </span> help if you can."
+                </p>
+                
+                <div class="grid grid-cols-2 gap-6 w-full max-w-2xl mx-auto">
+                    <button class="bg-slate-800 border border-slate-600 p-6 font-epic font-black text-xl text-slate-400 uppercase tracking-widest rounded hover:border-white transition-colors" onclick="checkPatch(this, true, 'd1-hub')">
+                        should / ought to
+                    </button>
+                    <button class="bg-slate-800 border border-slate-600 p-6 font-epic font-black text-xl text-slate-400 uppercase tracking-widest rounded hover:border-white transition-colors" onclick="checkPatch(this, false, 'd1-hub')">
+                        must / have to
+                    </button>
+                </div>
+                
+                <div id="d1-hub" class="hidden mt-8 font-mono text-white text-sm font-bold tracking-widest uppercase">> Correct. "Must" and "Have to" imply strong, inescapable rules. "Should" and "Ought to" are strong recommendations.</div>
+            </div>
+        </section>
+
+        <!-- TRACK 19: THE ZERO/FIRST CONDITIONAL -->
+        <section class="slide">
+            <h2 class="font-mono text-mj-silver text-[10px] font-bold uppercase tracking-[0.3em] mb-4">Track 19: Action</h2>
+            <h1 class="font-epic font-black text-4xl md:text-6xl text-white mb-10 uppercase tracking-widest text-center">The Catalyst</h1>
+            
+            <div class="mirror-panel p-10 md:p-14 w-full max-w-4xl mx-auto flex flex-col md:flex-row gap-8 items-center justify-between border-l-4 border-white">
+                <div class="flex-1">
+                    <p class="font-sans font-bold text-2xl text-slate-300 mb-6 leading-relaxed">To talk about real, possible conditions for change, we use:<br><br><span class="text-white font-black text-3xl drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">IF + Present, Imperative</span></p>
+                </div>
+                <div class="bg-[#020617] p-8 border border-slate-700 rounded shadow-lg flex-1 text-center w-full">
+                    <p class="text-mj-accent font-epic font-black text-xl uppercase mb-2">The Condition</p>
+                    <p class="font-sans font-bold text-slate-400 mb-6">"If you want to make the world a better place..."</p>
+                    <p class="text-white font-epic font-black text-xl uppercase mb-2">The Action (Imperative)</p>
+                    <p class="font-sans font-bold text-white text-xl">"...take a look at yourself, and then make a change."</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TRACK 20: TIMELINE SEQUENCER -->
+        <section class="slide">
+            <h2 class="font-mono text-mj-silver text-[10px] font-bold uppercase tracking-[0.3em] mb-4">Track 20: Sequencing</h2>
+            <h1 class="font-epic font-black text-4xl md:text-5xl text-white mb-6 uppercase tracking-widest text-center">The Process of Change</h1>
+            <p class="font-mono text-slate-500 text-xs mb-10 text-center uppercase tracking-widest">Click the steps in logical order</p>
+
+            <div class="mirror-panel p-10 w-full max-w-4xl mx-auto">
+                <div class="flex flex-col gap-4 w-full" id="timeline-container">
+                    <div class="bg-slate-800 border border-slate-600 p-6 rounded text-xl font-sans font-bold flex items-center justify-between cursor-pointer hover:border-white transition-colors timeline-item text-slate-300" data-order="3" onclick="selectTimeline(this)">
+                        <span>3. Act. ("Then make a change.")</span>
+                        <span class="timeline-number font-epic font-black text-black bg-white rounded-full w-8 h-8 flex items-center justify-center text-xl hidden"></span>
+                    </div>
+                    <div class="bg-slate-800 border border-slate-600 p-6 rounded text-xl font-sans font-bold flex items-center justify-between cursor-pointer hover:border-white transition-colors timeline-item text-slate-300" data-order="1" onclick="selectTimeline(this)">
+                        <span>1. Recognize. ("If you wanna make the world a better place...")</span>
+                        <span class="timeline-number font-epic font-black text-black bg-white rounded-full w-8 h-8 flex items-center justify-center text-xl hidden"></span>
+                    </div>
+                    <div class="bg-slate-800 border border-slate-600 p-6 rounded text-xl font-sans font-bold flex items-center justify-between cursor-pointer hover:border-white transition-colors timeline-item text-slate-300" data-order="2" onclick="selectTimeline(this)">
+                        <span>2. Reflect. ("Take a look at yourself...")</span>
+                        <span class="timeline-number font-epic font-black text-black bg-white rounded-full w-8 h-8 flex items-center justify-center text-xl hidden"></span>
+                    </div>
+                </div>
+            </div>
+            <div id="timeline-hub" class="hidden mt-6 p-4 border-l-4 border-white bg-slate-800 font-mono text-white text-[10px] font-bold w-full max-w-4xl mx-auto text-left tracking-widest uppercase">> Sequence matched. Self-reflection precedes action.</div>
+        </section>
+
+        <!-- TRACK 21: VOCAL BOOTH -->
+        <section class="slide">
+            <h2 class="font-mono text-mj-silver text-[10px] font-bold uppercase tracking-[0.3em] mb-4">Track 21: Pronunciation</h2>
+            <h1 class="font-epic font-black text-4xl md:text-6xl text-white mb-10 uppercase tracking-widest text-center">Vocal Booth</h1>
+            
+            <div class="mirror-panel p-10 md:p-14 w-full max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between text-center gap-8 border-t-2 border-mj-accent">
+                <div class="w-full md:w-5/12 bg-[#020617] p-8 rounded border border-slate-700">
+                    <span class="block text-slate-500 font-mono text-xs font-bold uppercase tracking-widest mb-4">Written</span>
+                    <span class="text-3xl font-black font-epic text-white tracking-widest uppercase">OUGHT TO / WANT TO</span>
+                </div>
+                <div class="text-4xl text-slate-600 hidden md:block"><i class="fa-solid fa-microphone-lines"></i></div>
+                <div class="w-full md:w-5/12 bg-slate-800 p-8 rounded border border-white shadow-[0_0_20px_rgba(255,255,255,0.2)]">
+                    <span class="block text-white font-mono text-xs font-bold uppercase tracking-widest mb-4">Spoken (Native Reduction)</span>
+                    <span class="text-3xl font-black font-epic text-white tracking-widest uppercase"><span class="italic drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]">OTTA / WANNA</span></span>
+                </div>
+            </div>
+            <p class="text-slate-400 font-sans font-bold mt-10 text-center max-w-2xl text-xl">
+                Native speakers rarely pronounce the "to". "I ought to" becomes "I otta". Practice saying: "You otta make a change!"
+            </p>
+        </section>
+
+        <!-- TRACK 22: RAPID FIRE -->
+        <section class="slide" id="slide-rapid">
+            <h2 class="font-mono text-black bg-mj-neon px-2 py-1 text-[10px] font-bold uppercase tracking-[0.3em] mb-4 rounded inline-block shadow-[0_0_15px_rgba(255,255,255,0.6)]">High Pressure</h2>
+            <h1 class="font-epic font-black text-4xl md:text-6xl text-white mb-6 uppercase tracking-widest text-center">Interrogation</h1>
+            <p class="font-sans font-bold text-slate-300 text-xl mb-10 text-center max-w-2xl">Answer the moral questions. You have <strong class="text-white">15 seconds</strong> per question!</p>
+
+            <div class="mirror-panel p-10 rounded w-full max-w-4xl mx-auto text-center border-4 border-slate-700 relative overflow-hidden" id="rap-container">
+                <div id="rap-bg-flash" class="absolute inset-0 bg-white opacity-0 pointer-events-none transition-opacity duration-300"></div>
+                <div class="relative z-10">
+                    <div class="text-5xl mb-6 text-white inline-block p-4 drop-shadow-[0_0_10px_rgba(255,255,255,0.8)]"><i class="fa-solid fa-stopwatch"></i></div>
+                    <p class="font-epic font-black text-3xl md:text-4xl text-white uppercase tracking-wider mb-10 h-24 flex items-center justify-center" id="rap-q">"What is the biggest problem in your city today?"</p>
+                    
+                    <div class="w-full h-2 bg-[#020617] mb-8 overflow-hidden rounded border border-slate-700">
+                        <div id="rap-timer" class="h-full bg-white w-full transition-all linear shadow-[0_0_10px_rgba(255,255,255,0.8)]"></div>
+                    </div>
+
+                    <button id="rap-btn" onclick="startRapid()" class="btn-neon px-10 py-4 text-xl">Start Clock</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TRACK 23: VOICE NOTE -->
+        <section class="slide">
+            <h2 class="font-mono text-black bg-white px-2 py-1 text-[10px] font-bold uppercase tracking-[0.3em] mb-4 rounded inline-block">Roleplay</h2>
+            <h1 class="font-epic font-black text-4xl md:text-6xl text-white mb-10 uppercase tracking-widest text-center">The Voice Note</h1>
+
+            <div class="w-full max-w-[340px] mx-auto bg-[#0a0a0a] rounded-[2rem] border-8 border-[#1e293b] h-[550px] shadow-[0_20px_50px_rgba(0,0,0,0.9)] relative flex flex-col overflow-hidden">
+                <div class="bg-slate-900 p-4 text-center border-b border-slate-700 flex justify-between items-center">
+                    <span class="font-sans font-bold text-red-500 text-xs animate-pulse">REC</span>
+                    <p class="font-sans font-bold text-white text-sm">To: Local Mayor</p>
+                    <i class="fa-solid fa-battery-half text-slate-500"></i>
+                </div>
+                
+                <div class="flex-1 p-8 flex flex-col justify-center text-center bg-[#020617] relative">
+                    <p class="font-sans font-bold text-slate-300 text-lg mb-6 leading-relaxed relative z-10">Record a 45s demanding message to your city's leader.</p>
+                    <div class="bg-slate-800 p-4 border border-slate-600 rounded-lg relative z-10 text-left">
+                        <p class="font-mono text-white text-[10px] uppercase font-bold tracking-widest mb-2">Target Grammar:</p>
+                        <p class="font-sans text-sm text-white">1. Point out a major problem.</p>
+                        <p class="font-sans text-sm text-white mt-1">2. Use <strong class="font-bold underline">MUST</strong> or <strong class="font-bold underline">OUGHT TO</strong> to demand a solution.</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 p-6 border-t border-slate-700 flex flex-col items-center justify-center h-40 relative">
+                    <button id="vn-btn" onmousedown="startVN()" onmouseup="stopVN()" onmouseleave="stopVN()" ontouchstart="startVN()" ontouchend="stopVN()" class="w-20 h-20 rounded-full bg-white flex items-center justify-center text-black text-3xl transition-transform active:scale-95 border-4 border-[#020617] shadow-[0_0_20px_rgba(255,255,255,0.6)]">
+                        <i class="fa-solid fa-microphone"></i>
+                    </button>
+
+                    <div id="vn-overlay" class="absolute inset-0 bg-[#0a0a0a] flex flex-col items-center justify-center gap-4 opacity-0 pointer-events-none transition-opacity px-6 border-t border-slate-700">
+                        <span class="font-epic font-black text-xl text-red-500 uppercase tracking-widest rec-glow px-3 py-1 rounded">Recording</span>
+                        <div class="w-full h-1 bg-slate-800 overflow-hidden">
+                            <div id="vn-prog" class="h-full bg-red-500 w-0"></div>
+                        </div>
+                        <span id="vn-time" class="font-mono font-bold text-red-500 text-sm">0:00 / 0:45</span>
+                    </div>
+                </div>
+            </div>
+            <div id="vn-hub" class="hidden mt-6 text-center font-mono text-white text-xs font-bold tracking-widest uppercase animate-pulse">> Audio Delivered to the Mayor's Office.</div>
+        </section>
+
+        <!-- TRACK 24: THE CROSSROADS -->
+        <section class="slide">
+            <h2 class="font-mono text-black bg-white px-2 py-1 text-[10px] font-bold uppercase tracking-[0.3em] mb-2 text-center rounded inline-block">The Dilemma</h2>
+            <h1 class="font-epic font-black text-4xl md:text-6xl text-white mb-10 uppercase tracking-widest text-center">The Crossroads</h1>
+
+            <div class="w-full max-w-5xl mx-auto flex flex-col md:flex-row gap-6 items-stretch h-full min-h-[400px]">
+                <!-- Context -->
+                <div class="md:w-1/3 mirror-panel p-8 text-center flex flex-col justify-center border-t-2 border-slate-500">
+                    <i class="fa-solid fa-scale-balanced text-5xl text-white mb-6 drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]"></i>
+                    <p class="font-sans font-bold text-xl text-white mb-6">Can you truly save the world without sacrificing your own family's comfort?</p>
+                    <p class="font-mono text-[10px] text-slate-400 font-bold uppercase tracking-widest">Choose and defend for 30s.</p>
+                </div>
+
+                <!-- Options -->
+                <div class="md:w-2/3 flex flex-col gap-4 relative" id="cross-options">
+                    <button onclick="selectPath('mj-accent')" class="flex-1 bg-slate-800 border border-slate-600 rounded border-l-8 border-l-mj-accent flex flex-col justify-center p-8 text-left group hover:bg-slate-700 transition-colors">
+                        <h3 class="font-epic font-black text-3xl text-white uppercase tracking-wider mb-2 group-hover:text-mj-accent transition-colors">The Savior</h3>
+                        <p class="font-sans font-bold text-slate-300">Dedicate your life to helping the poor, even if it means you and your family live with very little.</p>
+                    </button>
+                    <button onclick="selectPath('white')" class="flex-1 bg-slate-800 border border-slate-600 rounded border-l-8 border-l-white flex flex-col justify-center p-8 text-left group hover:bg-slate-700 transition-colors">
+                        <h3 class="font-epic font-black text-3xl text-white uppercase tracking-wider mb-2 group-hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] transition-all">The Provider</h3>
+                        <p class="font-sans font-bold text-slate-300">Focus entirely on your career to ensure your family is wealthy and safe, ignoring global issues.</p>
+                    </button>
+                </div>
+
+                <!-- Timer Screen -->
+                <div class="md:w-2/3 hidden mirror-panel rounded flex-col items-center justify-center p-10 border-t-4" id="cross-timer">
+                    <h3 class="font-epic font-black text-3xl text-white mb-6 uppercase tracking-widest" id="ct-title">Defend your choice!</h3>
+                    <div class="w-full h-2 bg-[#020617] rounded mb-8 overflow-hidden shadow-inner border border-slate-700">
+                        <div id="ct-bar" class="h-full w-full transition-all linear"></div>
+                    </div>
+                    <p class="font-mono text-5xl font-bold text-white" id="ct-clock">0:30</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TRACK 25: PLATINUM RECORD -->
+        <section class="slide">
+            <h2 class="font-mono text-mj-silver text-[10px] font-bold uppercase tracking-[0.3em] mb-2 text-center">Track 25</h2>
+            <h1 class="font-epic font-black text-4xl md:text-6xl text-white mb-10 uppercase tracking-widest text-center">Curtain Call</h1>
+            <div class="text-center relative z-20 flex flex-col items-center justify-center h-full">
+                <div class="relative mb-12">
+                    <div class="absolute inset-0 bg-white rounded-full blur-[60px] opacity-20 w-64 h-64"></div>
+                    <div class="w-72 h-72 rounded-full border-[10px] border-[#e2e8f0] flex flex-col items-center justify-center bg-[#f8fafc] shadow-2xl relative vinyl-spin z-10">
+                        <div class="absolute inset-2 rounded-full border border-black/10"></div>
+                        <div class="absolute inset-6 rounded-full border border-black/10"></div>
+                        <div class="w-24 h-24 rounded-full bg-gradient-to-br from-slate-300 to-white border-4 border-[#94a3b8] flex flex-col items-center justify-center shadow-inner z-20 overflow-hidden relative">
+                            <img src="https://upload.wikimedia.org/wikipedia/en/5/51/Michael_Jackson_-_Bad.png" class="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-multiply">
+                            <div class="w-4 h-4 rounded-full bg-black relative z-30"></div>
+                        </div>
+                    </div>
+                </div>
+                <h1 class="text-5xl lg:text-7xl font-epic font-black mb-4 uppercase tracking-tighter text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]">Platinum Record</h1>
+                <p class="text-xl text-slate-300 font-sans font-bold mb-12">"Make that change."</p>
+                <div class="flex gap-4">
+                    <button onclick="rate(1)" class="star text-4xl opacity-30 hover:opacity-100 transition-all cursor-pointer grayscale hover:grayscale-0">⭐</button>
+                    <button onclick="rate(2)" class="star text-4xl opacity-30 hover:opacity-100 transition-all cursor-pointer grayscale hover:grayscale-0">⭐</button>
+                    <button onclick="rate(3)" class="star text-4xl opacity-30 hover:opacity-100 transition-all cursor-pointer grayscale hover:grayscale-0">⭐</button>
+                    <button onclick="rate(4)" class="star text-4xl opacity-30 hover:opacity-100 transition-all cursor-pointer grayscale hover:grayscale-0">⭐</button>
+                    <button onclick="rate(5)" class="star text-4xl opacity-30 hover:opacity-100 transition-all cursor-pointer grayscale hover:grayscale-0">⭐</button>
+                </div>
+                <button onclick="location.reload()" class="mt-12 px-10 py-4 border border-white text-white font-epic font-black uppercase tracking-widest rounded hover:bg-white hover:text-black transition-colors shadow-[0_0_15px_rgba(255,255,255,0.4)]">Eject Tape</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- PLAYER CONTROLS (Footer) -->
+    <footer class="h-[100px] bg-[#020617] border-t border-slate-800 fixed bottom-0 w-full z-40 flex items-center justify-between px-6 lg:px-8 shadow-[0_-10px_30px_rgba(0,0,0,0.9)]">
+        <div class="flex items-center gap-4 w-1/3">
+            <div class="w-14 h-14 rounded bg-slate-800 border border-slate-700 hidden md:flex items-center justify-center shadow-[0_0_10px_rgba(0,0,0,0.8)] overflow-hidden">
+                <img src="https://upload.wikimedia.org/wikipedia/en/5/51/Michael_Jackson_-_Bad.png" alt="Cover" class="w-full h-full object-cover grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition-all">
+            </div>
+            <div>
+                <h4 class="font-epic font-black text-white text-sm uppercase tracking-wider">Man in the Mirror</h4>
+                <p class="text-slate-400 text-[10px] font-mono uppercase font-bold tracking-widest">Wolffy Studios</p>
+            </div>
+        </div>
+
+        <div class="flex flex-col items-center w-1/3 gap-1">
+            <div class="flex items-center gap-6 md:gap-8">
+                <button onclick="prevSlide()" id="btn-prev" class="text-slate-500 hover:text-white transition-colors disabled:opacity-30"><i class="fa-solid fa-backward-step text-xl"></i></button>
+                <button onclick="togglePlay(this)" class="w-12 h-12 rounded-full bg-slate-800 border border-slate-600 text-white flex items-center justify-center hover:border-white transition-all shadow-[0_0_10px_rgba(0,0,0,0.5)]"><i id="icon-play" class="fa-solid fa-play ml-1 hidden"></i><i id="icon-pause" class="fa-solid fa-pause"></i></button>
+                <button onclick="nextSlide()" id="btn-next" class="text-slate-500 hover:text-white transition-colors disabled:opacity-30"><i class="fa-solid fa-forward-step text-xl"></i></button>
+            </div>
+            <div class="w-full max-w-xs flex items-center gap-2">
+                <span class="text-[9px] font-mono text-slate-500" id="cur-step">01</span>
+                <div class="flex-1 h-1 bg-slate-800 rounded overflow-hidden">
+                    <div id="prog-bar" class="h-full bg-white w-0 transition-all duration-300 shadow-[0_0_5px_#ffffff]"></div>
+                </div>
+                <span class="text-[9px] font-mono text-slate-500">25</span>
+            </div>
+        </div>
+
+        <div class="w-1/3 flex justify-end gap-4">
+            <button onclick="toggleTeacher()" class="bg-slate-800 border border-slate-700 w-10 h-10 md:w-12 md:h-12 rounded flex items-center justify-center text-slate-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-sliders text-sm"></i>
+            </button>
+            <button onclick="toggleFS()" class="bg-slate-800 border border-slate-700 w-10 h-10 md:w-12 md:h-12 rounded hidden md:flex items-center justify-center text-slate-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-expand text-sm"></i>
+            </button>
+        </div>
+    </footer>
+
+    <script>
+        // CORE NAVIGATION
+        let current = 0;
+        const slides = document.querySelectorAll('.slide');
+        
+        function updateStage() {
+            slides.forEach(s => s.classList.remove('active'));
+            slides[current].classList.add('active');
+            
+            document.getElementById('cur-step').innerText = (current + 1).toString().padStart(2, '0');
+            document.getElementById('prog-bar').style.width = `${(current / (slides.length - 1)) * 100}%`;
+            document.getElementById('btn-prev').disabled = current === 0;
+            document.getElementById('btn-next').disabled = current === slides.length - 1;
+            document.getElementById('stage').scrollTop = 0;
+            
+            clearInterval(rapInt); clearInterval(vnInt); clearInterval(crossInt);
+        }
+
+        function nextSlide() { if(current < slides.length - 1) { current++; updateStage(); } }
+        function prevSlide() { if(current > 0) { current--; updateStage(); } }
+        function toggleFS() { if(!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{}); else document.exitFullscreen(); }
+
+        let isPlaying = true;
+        function togglePlay() {
+            isPlaying = !isPlaying;
+            document.getElementById('icon-play').classList.toggle('hidden', isPlaying);
+            document.getElementById('icon-pause').classList.toggle('hidden', !isPlaying);
+            document.querySelectorAll('.vinyl-spin').forEach(el => el.classList.toggle('paused', !isPlaying));
+        }
+
+        // TEACHER TOOLS
+        function toggleTeacher() { document.getElementById('teacher-panel').classList.toggle('open'); }
+        
+        function praise(txt) {
+            toggleTeacher();
+            const ov = document.getElementById('praise-overlay');
+            const pt = document.getElementById('praise-text');
+            pt.innerText = txt;
+            ov.classList.remove('opacity-0', 'pointer-events-none');
+            setTimeout(() => pt.classList.replace('scale-50', 'scale-100'), 50);
+            shootConfetti();
+            setTimeout(() => { 
+                pt.classList.replace('scale-100', 'scale-50'); 
+                ov.classList.add('opacity-0', 'pointer-events-none'); 
+            }, 2000);
+        }
+
+        function vibe(btn, text) {
+            document.getElementById('vibe-hub').classList.remove('hidden');
+            document.querySelectorAll('.mcq-btn').forEach(b => b.classList.remove('border-white'));
+            btn.classList.add('border-white');
+            shootConfetti(0.5);
+        }
+
+        // MECHANICS: TRIVIA
+        function checkTrivia(btn, isCorrect) {
+            const btns = btn.parentElement.querySelectorAll('button');
+            btns.forEach(b => b.disabled = true);
+            if(isCorrect) {
+                btn.classList.add('border-white');
+                btn.querySelector('span').classList.replace('text-slate-400', 'text-white');
+                document.getElementById('trivia-hub').classList.remove('hidden');
+                shootConfetti();
+            } else {
+                btn.classList.add('shake', 'border-red-500');
+                btn.querySelector('span').classList.replace('text-slate-400', 'text-red-500');
+            }
+        }
+
+        // MECHANICS: POLAROID
+        function developPolaroid(el, word, def, question, iconClass) {
+            const slide = el.closest('.slide');
+            const isFirstTime = !el.classList.contains('developed');
+            
+            // Só muda o ícone e a classe na primeira vez que revelar
+            if(isFirstTime) {
+                const emojiEl = el.querySelector('.polaroid-emoji');
+                if (emojiEl) emojiEl.className = `fa-solid ${iconClass} polaroid-emoji`;
+                el.classList.add('developed');
+            }
+            
+            // Destaca a polaroid selecionada no momento (UX)
+            slide.querySelectorAll('.polaroid').forEach(p => p.classList.remove('border-white', 'shadow-[0_0_30px_rgba(255,255,255,0.4)]'));
+            el.classList.add('border-white', 'shadow-[0_0_30px_rgba(255,255,255,0.4)]');
+            
+            const targetHubId = slide.querySelector('[id^="polaroid-hub-"]').id;
+            const targetHub = document.getElementById(targetHubId);
+            
+            // Atualiza sempre o texto do painel
+            if (targetHub) {
+                const titleNum = targetHubId.split('-')[2];
+                document.getElementById(`polaroid-title-${titleNum}`).innerText = word;
+                document.getElementById(`polaroid-def-${titleNum}`).innerText = def;
+                document.getElementById(`polaroid-q-${titleNum}`).innerText = "🗣️ " + question;
+                targetHub.classList.remove('hidden');
+            }
+            
+            // Só lança os confetis se for a primeira vez e todas estiverem reveladas
+            if(isFirstTime) {
+                const numDeveloped = slide.querySelectorAll('.developed').length;
+                if(numDeveloped === 2) shootConfetti(1);
+            }
+        }
+
+        // MECHANICS: FACT CHECK
+        function checkTF(btn, isCorrect, hub) {
+            const btns = btn.parentElement.querySelectorAll('button');
+            btns.forEach(b => b.disabled = true);
+            if(isCorrect) {
+                btn.classList.replace('bg-slate-800', 'bg-white');
+                btn.classList.replace('text-slate-400', 'text-black');
+                btn.classList.replace('border-slate-600', 'border-white');
+                document.getElementById(hub).classList.remove('hidden');
+                shootConfetti();
+            } else {
+                btn.classList.add('shake', 'border-red-500', 'text-red-500');
+            }
+        }
+
+        // MECHANICS: LYRIC HACKER
+        function hackLyric(el, hubId) {
+            el.closest('.slide').querySelectorAll('.lyric-hl').forEach(h => h.classList.remove('active'));
+            el.closest('.slide').querySelectorAll('[id^="lh-"]').forEach(h => h.classList.add('hidden'));
+            
+            el.classList.add('active');
+            document.getElementById(hubId).classList.remove('hidden');
+            shootConfetti(0.5);
+        }
+
+        // MECHANICS: MIRROR DIAL (Grammar)
+        function toggleMirrorDial() {
+            const dial = document.getElementById('mirror-dial');
+            const real = document.getElementById('mirror-real');
+            const regret = document.getElementById('mirror-regret');
+            const lbl1 = document.getElementById('dial-lbl-1');
+            const lbl2 = document.getElementById('dial-lbl-2');
+
+            if(dial.classList.contains('-rotate-45')) {
+                dial.classList.replace('-rotate-45', 'rotate-45');
+                real.style.opacity = '0'; real.style.transform = 'scale(0.8)';
+                regret.style.opacity = '1'; regret.style.transform = 'scale(1)';
+                lbl1.classList.add('opacity-30'); lbl2.classList.remove('opacity-30');
+            } else {
+                dial.classList.replace('rotate-45', '-rotate-45');
+                regret.style.opacity = '0'; regret.style.transform = 'scale(0.8)';
+                real.style.opacity = '1'; real.style.transform = 'scale(1)';
+                lbl2.classList.add('opacity-30'); lbl1.classList.remove('opacity-30');
+                shootConfetti();
+            }
+        }
+
+        // MECHANICS: SYSTEM PATCH
+        function checkPatch(btn, isCorrect, hub) {
+            const btns = btn.parentElement.querySelectorAll('button');
+            btns.forEach(b => b.disabled = true);
+            if(isCorrect) {
+                btn.classList.replace('bg-slate-800', 'bg-white');
+                btn.classList.replace('text-slate-400', 'text-black');
+                btn.classList.replace('border-slate-600', 'border-white');
+                document.getElementById(hub).classList.remove('hidden');
+                shootConfetti();
+            } else {
+                btn.classList.add('shake', 'border-red-500', 'text-red-500');
+            }
+        }
+
+        // MECHANICS: TIMELINE
+        let tlClick = 0;
+        const tlExp = [1, 2, 3];
+        function selectTimeline(btn) {
+            if(btn.classList.contains('border-white')) return;
+            const ord = parseInt(btn.getAttribute('data-order'));
+            
+            if(ord === tlExp[tlClick]) {
+                tlClick++;
+                btn.classList.replace('border-slate-600', 'border-white');
+                btn.classList.replace('text-slate-300', 'text-white');
+                const num = btn.querySelector('.timeline-number');
+                num.innerText = tlClick;
+                num.classList.remove('hidden');
+                if(tlClick === 3) { document.getElementById('timeline-hub').classList.remove('hidden'); shootConfetti(); }
+            } else {
+                btn.classList.add('shake', 'border-red-500', 'text-red-500');
+                setTimeout(() => btn.classList.remove('shake', 'border-red-500', 'text-red-500'), 400);
+            }
+        }
+
+        // SIMULATORS: RAPID FIRE
+        const rapQ = [
+            "What is the biggest problem in your city today?",
+            "If you were the mayor, what is the first rule you would change?",
+            "Do people generally care more about strangers or about their own comfort?"
+        ];
+        let rapIdx = 0; let rapInt;
+        function startRapid() {
+            document.getElementById('rap-btn').style.display = 'none';
+            document.getElementById('rap-container').classList.replace('border-slate-700', 'border-white');
+            document.getElementById('rap-container').classList.add('shadow-[0_0_30px_rgba(255,255,255,0.3)]');
+            runRapRound();
+        }
+        function runRapRound() {
+            if(rapIdx >= rapQ.length) {
+                document.getElementById('rap-q').innerText = "INTERROGATION SURVIVED.";
+                document.getElementById('rap-q').classList.replace('text-white', 'text-mj-accent');
+                document.getElementById('rap-timer').style.width = '0%';
+                shootConfetti(2);
+                return;
+            }
+            document.getElementById('rap-q').innerText = '"' + rapQ[rapIdx] + '"';
+            
+            // Screen flash effect
+            const flash = document.getElementById('rap-bg-flash');
+            flash.classList.remove('opacity-0');
+            setTimeout(() => flash.classList.add('opacity-0'), 150);
+
+            let w = 100; const bar = document.getElementById('rap-timer');
+            clearInterval(rapInt);
+            rapInt = setInterval(() => {
+                w -= (100/150); // 15s
+                bar.style.width = w + '%';
+                if(w <= 0) { clearInterval(rapInt); rapIdx++; runRapRound(); }
+            }, 100);
+        }
+
+        // SIMULATORS: VOICE NOTE
+        let vnInt; let vnSecs = 45;
+        function startVN() {
+            const btn = document.getElementById('vn-btn');
+            btn.classList.replace('bg-white', 'bg-slate-900');
+            btn.classList.replace('text-black', 'text-red-500');
+            btn.classList.replace('border-[#020617]', 'border-red-500');
+            document.getElementById('vn-overlay').classList.remove('opacity-0', 'pointer-events-none');
+            vnSecs = 45;
+            document.getElementById('vn-time').innerText = `0:${vnSecs.toString().padStart(2,'0')} / 0:45`;
+            
+            vnInt = setInterval(() => {
+                vnSecs--;
+                document.getElementById('vn-time').innerText = `0:${vnSecs.toString().padStart(2,'0')} / 0:45`;
+                document.getElementById('vn-prog').style.width = `${((45-vnSecs)/45)*100}%`;
+                if(vnSecs <= 0) stopVN();
+            }, 1000);
+        }
+        function stopVN() {
+            clearInterval(vnInt);
+            const btn = document.getElementById('vn-btn');
+            btn.classList.replace('bg-slate-900', 'bg-white');
+            btn.classList.replace('text-red-500', 'text-black');
+            btn.classList.replace('border-red-500', 'border-[#020617]');
+            document.getElementById('vn-overlay').classList.add('opacity-0', 'pointer-events-none');
+            if(vnSecs < 42) { document.getElementById('vn-hub').classList.remove('hidden'); shootConfetti(); }
+        }
+
+        // SIMULATORS: CROSSROADS
+        let crossInt;
+        function selectPath(color) {
+            document.getElementById('cross-options').style.display = 'none';
+            const tmr = document.getElementById('cross-timer');
+            tmr.classList.replace('hidden', 'flex');
+            tmr.classList.add('border-' + color);
+            if (color === 'white') {
+                tmr.classList.add('shadow-[0_0_30px_rgba(255,255,255,0.6)]');
+            } else {
+                tmr.classList.add('shadow-[0_0_30px_rgba(56,189,248,0.6)]');
+            }
+            
+            let w = 100; let secs = 30;
+            const bar = document.getElementById('ct-bar');
+            bar.classList.add('bg-' + color);
+            
+            crossInt = setInterval(() => {
+                w -= (100/300); bar.style.width = w + '%';
+                if(w % (100/30) < (100/300)) { secs--; document.getElementById('ct-clock').innerText = `0:${secs.toString().padStart(2,'0')}`; }
+                if(w <= 0) { 
+                    clearInterval(crossInt); 
+                    document.getElementById('ct-title').innerText = "TIME IS UP."; 
+                    if(color==='white') {
+                        document.getElementById('ct-clock').classList.add('text-white');
+                    } else {
+                        document.getElementById('ct-clock').classList.add('text-mj-accent'); 
+                    }
+                    shootConfetti(); 
+                }
+            }, 100);
+        }
+
+        // FINAL RATING
+        function rate(stars) {
+            document.querySelectorAll('.star').forEach((s, i) => {
+                if(i < stars) s.classList.remove('opacity-30', 'grayscale');
+                else s.classList.add('opacity-30', 'grayscale');
+            });
+            shootConfetti();
+        }
+
+        function shootConfetti(sec=1) {
+            if (typeof confetti !== 'function') return;
+            var duration = sec * 1000; var end = Date.now() + duration;
+            (function frame() {
+                confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#ffffff', '#cbd5e1', '#38bdf8'] });
+                confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#ffffff', '#cbd5e1', '#38bdf8'] });
+                if (Date.now() < end) requestAnimationFrame(frame);
+            }());
+        }
+
+        window.onload = updateStage;
+    </script>
+</body>
+</html>
